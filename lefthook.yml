@@ -1,0 +1,31 @@
+pre-commit:
+  parallel: true
+  commands:
+    ruff-fix:
+      glob: '*.py'
+      run: uv run ruff check --fix {staged_files} && uv run ruff format {staged_files}
+      stage_fixed: true
+    gitleaks:
+      run: |
+        if command -v gitleaks >/dev/null 2>&1; then
+          gitleaks protect --staged --verbose
+        else
+          echo "WARNING: gitleaks not installed (brew install gitleaks) — secret scan SKIPPED locally. CI still runs it." >&2
+        fi
+
+commit-msg:
+  commands:
+    conventional:
+      run: uv run cz check --allow-abort --commit-msg-file {1}
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: uv run pyrefly check
+    test:
+      run: uv run pytest
+    slop:
+      run: uv run ast-grep scan --error
+    deps:
+      run: uv run deptry src

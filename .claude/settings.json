@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make verify)",
+      "Bash(make fmt)",
+      "Bash(make setup)",
+      "Bash(uv sync:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(uv run pyrefly:*)",
+      "Bash(uv run ast-grep:*)",
+      "Bash(uv run deptry:*)",
+      "Bash(uv run vulture:*)",
+      "Bash(uv run lint-imports:*)",
+      "Bash(uv add:*)",
+      "Bash(uv build)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(curl:* | sh)",
+      "Bash(pip install:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [ -n \"$f\" ] && [ \"${f##*.}\" = \"py\" ]; then cd \"$CLAUDE_PROJECT_DIR\" && uv run ruff check --fix \"$f\" >/dev/null 2>&1; uv run ruff format \"$f\" >/dev/null 2>&1; fi; exit 0"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && log=$(mktemp) && if ! make verify >\"$log\" 2>&1; then echo 'make verify FAILED — the task is not done:' >&2; tail -40 \"$log\" >&2; exit 2; fi",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

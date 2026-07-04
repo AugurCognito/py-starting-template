@@ -1,0 +1,11 @@
+id: no-raise-exception-wrap
+language: python
+severity: error
+message: re-wrapping as bare Exception destroys the type and traceback. Use `raise` alone, or `raise DomainError(...) from exc`.
+rule:
+  any:
+    - pattern: raise Exception($ERR)
+    - pattern: raise Exception(str($ERR))
+  inside:
+    kind: except_clause
+    stopBy: end

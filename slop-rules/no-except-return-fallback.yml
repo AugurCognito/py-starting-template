@@ -1,0 +1,18 @@
+id: no-except-return-fallback
+language: python
+severity: error
+message: except block returns a silent fallback — this hides the real failure. Re-raise, raise a domain error with `from exc`, or let it propagate.
+rule:
+  kind: return_statement
+  inside:
+    kind: except_clause
+    stopBy: end
+  any:
+    - pattern: return None
+    - pattern: return
+    - pattern: return []
+    - pattern: return {}
+    - pattern: return ""
+    - pattern: return ()
+    - pattern: return False
+    - pattern: return 0

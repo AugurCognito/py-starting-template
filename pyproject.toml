@@ -1,0 +1,107 @@
+[project]
+name = "py-starting-template"
+version = "0.1.0"
+description = "Agent-ready Python starter: the harness is the product"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  { include-group = "lint" },
+  { include-group = "test" },
+  { include-group = "quality" },
+  { include-group = "hooks" },
+]
+lint = ["ruff>=0.15.20", "pyrefly>=1.1.1", "ast-grep-cli>=0.39"]
+test = ["pytest>=9.1", "pytest-cov>=7.1"]
+quality = ["deptry>=0.23", "vulture>=2.14", "import-linter>=2.11"]
+hooks = ["lefthook>=2.1.9", "commitizen>=4.16"]
+
+[tool.uv]
+required-version = ">=0.11.26"
+default-groups = ["dev"]
+# Supply-chain cooldown: never resolve a release younger than 7 days.
+exclude-newer = "7 days"
+
+[build-system]
+requires = ["uv_build>=0.11.26,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# Explicit list — never "ALL" (it implicitly enables new rules on upgrade).
+select = [
+  "E", "W", "F", # pycodestyle + pyflakes
+  "I",           # isort
+  "N",           # pep8-naming
+  "UP",          # pyupgrade
+  "B",           # bugbear (mutable defaults, real bugs)
+  "A",           # builtin shadowing
+  "C4",          # comprehensions
+  "SIM",         # simplify
+  "TID",         # tidy imports
+  "RUF",         # ruff-native (unused noqa, ...)
+  "S",           # bandit security port
+  "PL",          # pylint parity
+  "PERF",        # perflint
+  "PGH",         # blanket type: ignore / noqa
+  "T20",         # print() left behind
+  "ERA",         # commented-out code
+]
+ignore = ["E501"] # the formatter owns line length
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "PLR2004"] # asserts, test creds, magic values
+
+[tool.pyrefly]
+project-includes = ["src", "tests"]
+search-path = ["src"]
+python-version = "3.13"
+# Pyrefly's unconfigured default is permissive — strict must be explicit.
+preset = "strict"
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+addopts = [
+  "-ra",
+  "--strict-markers",
+  "--strict-config",
+  "--cov=app",
+  "--cov-branch",
+  "--cov-report=term-missing",
+]
+testpaths = ["tests"]
+xfail_strict = true
+filterwarnings = ["error"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError"]
+
+[tool.deptry]
+known_first_party = ["app"]
+
+[tool.vulture]
+paths = ["src"]
+min_confidence = 80
+
+[tool.importlinter]
+root_package = "app"
+
+[[tool.importlinter.contracts]]
+name = "api sits above core; core never imports upward"
+type = "layers"
+layers = ["app.api", "app.core"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"

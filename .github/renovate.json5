@@ -1,0 +1,13 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:best-practices'],
+  // Belt & suspenders with uv's own exclude-newer cooldown.
+  minimumReleaseAge: '3 days',
+  lockFileMaintenance: { enabled: true, schedule: ['before 6am on monday'] },
+  packageRules: [
+    {
+      matchManagers: ['github-actions'],
+      pinDigests: true,
+    },
+  ],
+}

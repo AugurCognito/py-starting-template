@@ -1,0 +1,7 @@
+id: no-narrator-comments
+language: python
+severity: error
+message: narrator comment — it restates what the next line does. Comments state constraints the code cannot express, or they go.
+rule:
+  kind: comment
+  regex: '(?i)^#\s*(now |then |next,? |finally,? |first,? |step \d|we |increment |initialize |loop (over|through) |iterate |call the |return the |create the |define the )'

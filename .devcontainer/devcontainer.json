@@ -1,0 +1,13 @@
+{
+  "name": "py-starting-template",
+  "image": "ghcr.io/astral-sh/uv:python3.13-bookworm-slim",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+  "postCreateCommand": "make setup",
+  "customizations": {
+    "vscode": {
+      "extensions": ["charliermarsh.ruff", "meta.pyrefly"]
+    }
+  }
+}
