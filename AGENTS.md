@@ -40,7 +40,12 @@ A task is **not complete** until `make verify` passes. No exceptions. The Stop h
 - `src/app/` — the package (src layout; rename per project). `tests/` — pytest tests **mirroring the package tree** (Elixir convention): `src/app/foo/bar.py` → `tests/foo/test_bar.py`. 80% branch-coverage floor.
 - Layering is enforced by import-linter: `app.api` may import `app.core`, never the reverse. Extend the contract in `pyproject.toml` as layers grow.
 - `slop-rules/` — ast-grep AST rules against LLM-slop patterns ruff can't express. Ruff covers the classics (E711, E722, S110/S112, B006, PGH003, T201, ERA001).
+- `docs/` — `decisions.md` (append-only decision log) · `guides/` (how-tos) · `plans/` + `plans/archive/` (dated plans, kept after execution) · `reports/` (dated research) · `HANDOFF.md` (session memory).
 - Gates: lefthook (`lefthook.yml`) locally, `.github/workflows/ci.yml` in CI. Local hooks are bypassable; CI is not.
+
+## Finding Things
+
+Grep/Glob plus the `Explore` agent (pinned to haiku) — that's the whole search stack. No semantic index, no committed code map; deliberate, see `docs/decisions.md`.
 
 ## What Does NOT Exist (yet)
 
@@ -48,6 +53,8 @@ No runtime dependencies, no CLI entrypoint, no server, no database, no Docker, n
 
 ## Session Workflow
 
-- Long task? Write a plan first (`/plan` command → `docs/plans/`).
-- Ending a session mid-task? Update `docs/HANDOFF.md` (`/handoff` command).
-- Found something non-obvious? Record it (`/report` command) or update this file — with the WHY, not just the WHAT.
+- Long task? Write a plan first (`/plan` skill → `docs/plans/`).
+- Ending a session mid-task? Update `docs/HANDOFF.md` (`/handoff` skill — also archives completed plans).
+- Found something non-obvious? Record it (`/report` skill) or update this file — with the WHY, not just the WHAT.
+- Made a call the code can't express (tool choice, rejected approach, policy)? Append it to `docs/decisions.md`.
+- Blocked install or writing a new slop rule? `docs/guides/` first.

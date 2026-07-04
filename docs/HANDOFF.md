@@ -1,4 +1,12 @@
+---
+updated: 2026-07-04
+git_commit: 4c04a87
+branch: main
+---
+
 # HANDOFF
+
+> Session memory. The `/handoff` skill maintains this file. It describes NOW, not history — overwrite stale sections. Reference code as `file:line`, never pasted blocks.
 
 _No task in flight (2026-07-04). This file is overwritten by `/handoff` when a session ends mid-task._
 
