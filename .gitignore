@@ -10,6 +10,7 @@ dist/
 .coverage
 .ruff_cache/
 .pyrefly/
+mutants/
 
 # Env & local
 .env

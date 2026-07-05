@@ -33,7 +33,8 @@ A task is **not complete** until `make verify` passes. No exceptions. The Stop h
 7. **Conventional commits** (`feat:`, `fix:`, `chore:`, …) — enforced by commitizen.
 8. **Absolute dates in docs** (2026-07-04, never "yesterday").
 9. **Throwaway output goes in `scratch/`** (gitignored) — never the repo root.
-10. **Secrets live in `.env`** (gitignored); commit only `.env.example` with placeholders. Never read or print `.env*` contents.
+10. **Secrets live in `.env`** (gitignored); commit only `.env.example` with placeholders. Never read or print `.env*` contents. Sandbox note: repo settings enable the OS sandbox with a package-registry network allowlist; set credential-path denies (`~/.ssh`, `~/.aws`) in your USER settings — repo settings cannot.
+11. **When compacting, preserve**: the active plan file path, the list of modified files, and the verify command.
 
 ## Architecture
 
@@ -47,13 +48,16 @@ A task is **not complete** until `make verify` passes. No exceptions. The Stop h
 
 Grep/Glob plus the `Explore` agent (pinned to haiku) — that's the whole search stack. No semantic index, no committed code map; deliberate, see `docs/decisions.md`.
 
+Subagents read, the main thread writes — delegating implementation fragments context; delegate searches and reviews only.
+
 ## What Does NOT Exist (yet)
 
 No runtime dependencies, no CLI entrypoint, no server, no database, no Docker, no release automation. Don't scaffold any of these speculatively (YAGNI) — add them when a task requires them, and update this section when you do.
 
 ## Session Workflow
 
-- Long task? Write a plan first (`/plan` skill → `docs/plans/`).
+- Long task? Plan first (`/plan` skill → `docs/plans/`): interview the human on scope/constraints/acceptance, write a research doc first for unfamiliar code, then draft.
+- Weekly: run `/audit` — drift and slop sweep.
 - Ending a session mid-task? Update `docs/HANDOFF.md` (`/handoff` skill — also archives completed plans).
 - Found something non-obvious? Record it (`/report` skill) or update this file — with the WHY, not just the WHAT.
 - Made a call the code can't express (tool choice, rejected approach, policy)? Append it to `docs/decisions.md`.

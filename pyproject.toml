@@ -105,3 +105,8 @@ layers = ["app.api", "app.core"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
+
+# Audit-time mutation spot-check only (`/audit` skill, via uvx) — never part of `make verify`.
+[tool.mutmut]
+source_paths = ["src/app/"]
+pytest_add_cli_args_test_selection = ["tests/"]

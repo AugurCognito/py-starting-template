@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(make verify)",
@@ -18,20 +19,51 @@
     "deny": [
       "Read(.env)",
       "Read(.env.*)",
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)",
-      "Bash(curl:* | sh)",
-      "Bash(pip install:*)"
+      "Read(**/*.pem)",
+      "Read(**/id_rsa*)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(pip install *)"
     ]
   },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowedDomains": ["pypi.org", "files.pythonhosted.org", "github.com"]
+    }
+  },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-context.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/bash-gate.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [ -n \"$f\" ] && [ \"${f##*.}\" = \"py\" ]; then cd \"$CLAUDE_PROJECT_DIR\" && uv run ruff check --fix \"$f\" >/dev/null 2>&1; uv run ruff format \"$f\" >/dev/null 2>&1; fi; exit 0"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-ruff.sh",
+            "timeout": 60
           }
         ]
       }
@@ -41,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && log=$(mktemp) && if ! make verify >\"$log\" 2>&1; then echo 'make verify FAILED — the task is not done:' >&2; tail -40 \"$log\" >&2; exit 2; fi",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop-verify.sh",
             "timeout": 300
           }
         ]

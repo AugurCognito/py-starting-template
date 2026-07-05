@@ -1,14 +1,15 @@
 ---
-updated: 2026-07-04
-git_commit: 4c04a87
+updated: 2026-07-06
+git_commit: 0ba3415
 branch: main
+last_green_verify: 2026-07-06 03:25 — make verify
 ---
 
 # HANDOFF
 
 > Session memory. The `/handoff` skill maintains this file. It describes NOW, not history — overwrite stale sections. Reference code as `file:line`, never pasted blocks.
 
-_No task in flight (2026-07-04). This file is overwritten by `/handoff` when a session ends mid-task._
+_No task in flight (2026-07-06). This file is overwritten by `/handoff` when a session ends mid-task._
 
 ## Known landmines
 

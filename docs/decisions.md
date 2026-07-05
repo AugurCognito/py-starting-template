@@ -23,3 +23,12 @@ The skill-creator eval pattern (`evals.json`, blind A/B) was considered for `/pl
 ## 2026-07-04 — Completed plans archive to `docs/plans/archive/`
 
 Plans are kept, not deleted, after execution (`status: done`, moved by the `/handoff` sweep) — cheap, and preserves the WHY for future sessions. Claude Code's own plan storage stays machine-local (`~/.claude/plans/`), so repo-visible plans must be written by convention.
+
+## 2026-07-06 — Harness SOTA upgrade
+
+- Deny-lists demoted to defense-in-depth: current docs call Bash arg-pattern rules fragile (subcommand splitting, wrapper bypasses); the PreToolUse `bash-gate.sh` hook + OS sandbox are the enforcement layer now.
+- Stop hook hardened: `stop_hook_active` check (infinite-loop guard), changed-files fingerprint short-circuit (`.git/claude-last-green`), failures-only capped output — verbose passing output degrades subsequent work.
+- SessionStart injection added (`session-context.sh`): re-grounds branch/dirty-state/definition-of-done after compaction — adherence decays within-session, not with file shape (2026 factorial study).
+- Skills rewritten to trigger-first descriptions; `/handoff`, `/report`, `/audit` get `disable-model-invocation: true` (human-timed workflows).
+- `/audit` weekly ritual added: plan/doc/decision drift, slop trend, mutation spot-check.
+- Mutation testing landed as audit-time spot-check only, never in `make verify` (runtime cost): mutmut 3.6 via uvx; its CLI dropped `--paths-to-mutate`, so config lives in `[tool.mutmut]` and scoping uses mutant-name patterns (`app.<module>*`); `--no-cov` required because the coverage floor spuriously kills mutants under test subsetting.
